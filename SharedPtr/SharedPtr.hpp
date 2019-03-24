@@ -7,8 +7,11 @@ struct DFDef
 {
 	void operator()(T *& pf)
 	{
-		delete pf;
-		pf = nullptr;
+		if (pf)
+		{
+			delete pf;
+			pf = nullptr;
+		}
 	}
 };
 
@@ -18,8 +21,11 @@ struct DFDef<FILE>
 {
 	void operator()(FILE *& pf)
 	{
-		fclose(pf);
-		pf = nullptr;
+		if (pf)
+		{
+			fclose(pf);
+			pf = nullptr;
+		}
 	}
 };
 
@@ -28,8 +34,11 @@ struct Free
 {
 	void operator()(void * pf)
 	{
-		free(pf);
-		pf = nullptr;
+		if (pf)
+		{
+			free(pf);
+			pf = nullptr;
+		}
 	}
 };
 
@@ -52,7 +61,9 @@ public:
 	SharedPtr(const SharedPtr<T, DF>& sp):SharedPtr(sp._ptr)	//Î¯ÍÐ¹¹Ôì
 	{
 		_pcount = sp._pcount;
-		++(*_pcount);
+
+		if(_pcount)
+			++(*_pcount);
 	}
 
 	SharedPtr<T, DF>& operator=(const SharedPtr<T, DF>& sp)
@@ -62,7 +73,9 @@ public:
 			Relase();
 			_ptr = sp._ptr;
 			_pcount = sp._pcount;
-			++(*_pcount);
+
+			if(_pcount)
+				++(*_pcount);
 		}
 		return *this;
 	}
